@@ -1,0 +1,52 @@
+{% extends "focus/base.html" %}
+
+{% block content %}
+<style>
+body {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 500%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.card-body{
+ background-color: white;
+}
+
+</style>
+
+
+<body>
+
+<div class="row row-cols-1 row-cols-md-3">
+  {% for post in posts %}
+  <div class="col mb-4">
+    <div class="card">
+      <div class="card-body">
+        <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+         <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ post.author }}</a>
+             
+              <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+            
+          </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+  </body>
+{% endblock %}

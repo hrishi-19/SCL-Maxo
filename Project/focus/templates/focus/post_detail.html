@@ -1,0 +1,235 @@
+{% extends "focus/base.html" %}
+{% block content %}
+    <style>
+  .content-section{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    width:500px;
+    display: inline-block;
+    margin-right: 50px;
+  
+}
+   
+  body{
+ background: #3C1874;  /* fallback for old browsers */
+ background: -webkit-linear-gradient(to right, #1CB5E0, #000046);  /* Chrome 10-25, Safari 5.1-6 */
+ background: linear-gradient(to right, #1CB5E0, #000046); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+   }
+  .Upload-part{
+    
+    display: inline-block;
+    margin-left: 50px;
+}
+.article-title{
+  color: #1CB5E0;
+}
+.Upload-part{
+  color: white;
+  }
+* {
+  box-sizing: border-box;
+}
+:root {
+  --background: #E5FFB3;
+  --background-accent: #DBF8A3;
+  --background-accent-2: #BDE66E;
+  --light: #92DE34;
+  --dark: #69BC22;
+  --text: #025600;
+  }
+  #send{
+    
+  display: block;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  background-color: var(--light);
+  width: 100px;
+  height: 40px;
+  border-radius: 30px;
+  
+  color: var(--text);
+  background-size: 100% 100%;
+  box-shadow: 0 0 0 7px var(--light) inset;
+  }
+  #send:hover{
+     background-image: linear-gradient(
+    145deg,
+    transparent 10%,
+    var(--dark) 10% 20%,
+    transparent 20% 30%,
+    var(--dark) 30% 40%,
+    transparent 40% 50%,
+    var(--dark) 50% 60%,
+    transparent 60% 70%,
+    var(--dark) 70% 80%,
+    transparent 80% 90%,
+    var(--dark) 90% 100%
+  );
+  animation: background 3s linear infinite;
+}
+@keyframes background {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+
+  }
+    </style>
+    <body>
+   
+  <article class="content-section">
+    <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ object.author }}</a>
+        <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+        {% if object.author == user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ object.title }}</h2>
+      <p class="article-content">{{ object.content }}</p>
+
+    </div>
+  </article>
+  <input type="hidden" id="cool" value="{{ object.title }}">
+  <!-- -----------------------------------------------------upload-------------------------------------------------------------- -->
+  <div class="Upload-part">
+    Upload Files<br />
+    <input type="file" id="files" multiple /><br /><br />
+    <button id="send">Upload</button>
+    <p id="uploading"></p>
+    <progress value="0" max="100" id="progress"></progress>
+    </div>
+
+    <table id="List">
+      <tbody>
+
+      </tbody>
+    </table>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-app.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- TODO: Add SDKs for Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-storage.js"></script>
+
+    <script>
+
+
+
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyAD2CE7gNCg7lUsTFQ-yNPy17lgbcA-lW8",
+        authDomain: "autobot-974fa.firebaseapp.com",
+        databaseURL: "https://autobot-974fa.firebaseio.com",
+        projectId: "autobot-974fa",
+        storageBucket: "autobot-974fa.appspot.com",
+        messagingSenderId: "395258880218",
+        appId: "1:395258880218:web:44a788d399296e47d245e3"
+        
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script>
+
+    var files = [];
+
+    document.getElementById("files").addEventListener("change", function(e) {
+      files = e.target.files;
+      for (let i = 0; i < files.length; i++) {
+        console.log(files[i]);
+      }
+    });
+    var yo = document.getElementById("cool").value;
+    console.log(yo)
+
+
+
+
+
+    document.getElementById("send").addEventListener("click", function() {
+      //checks if files are selected
+      if (files.length != 0) {
+        //Loops through all the selected files
+        for (let i = 0; i < files.length; i++) {
+          //create a storage reference
+          var storage = firebase.storage().ref(yo+'/'+files[i].name);
+          console.log(storage)
+          //upload file
+          var upload = storage.put(files[i]);
+
+          //update progress bar
+          upload.on(
+            "state_changed",
+            function progress(snapshot) {
+              var percentage =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              document.getElementById("progress").value = percentage;
+            },
+
+            function error() {
+              alert("error uploading file");
+            },
+
+            function complete() {
+              document.getElementById(
+                "uploading"
+              ).innerHTML += `${files[i].name} uploaded <br />`;
+            }
+          );
+        }
+      } else {
+        alert("No file chosen");
+      }
+    });
+    // Create a reference under which you want to list
+ // Since you mentioned your images are in a folder,
+    // we'll create a Reference to that folder:
+    var storageRef = firebase.storage().ref();
+
+    $('#List').find('tbody').html('');
+    // Now we get the references of these images
+    var i=0;
+
+storageRef.child(yo+'/').listAll().then(function(result){
+    result.items.forEach(function(downloadURL){
+        // console.log("ImageReference"+imageRef.toString())
+
+        i++;
+        displayImage(i, downloadURL);
+
+    });
+});
+
+function displayImage(row,files){
+    files.getDownloadURL().then(function(url){
+
+        // console.log(url);
+        // document.getElementById("d").innerHTML=url
+
+        let new_html = '';
+        new_html += '<tr>';
+        new_html += '<td>';
+        new_html += row;
+        new_html +='</td>'
+        new_html += '<td>';
+        new_html += '<embed src="'+url+'"   height="300px" width="300px"><a href="'+url+'>download</a>';
+        new_html +='</td>';
+        new_html +='<tr>';
+          $('#List').find('tbody').append(new_html);
+    });
+}
+
+    </script>
+{% endblock content %}

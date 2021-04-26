@@ -1,0 +1,39 @@
+{% extends "focus/base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<style>
+	body {
+	background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 600%;
+	animation: gradient 15s ease infinite;
+}
+h1 { color: #ffffff; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: 0;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+</style>
+
+    <h1>You have been logged out</h1>
+        <div class="border-top pt-3">
+           
+        </div>
+
+
+<div class="btn-group mt-2 mb-4" role="group" aria-label="actionButtons">
+	<a href="{% url 'login' %}" class="d-block btn btn-outline-light"></i>Login again</a>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" integrity="sha256-qM7QTJSlvtPSxVRjVWNM2OfTAz/3k5ovHOKmKXuYMO4=" crossorigin="anonymous"></script>
+
+</html>
+{% endblock %}
